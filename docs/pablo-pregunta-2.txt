@@ -1,0 +1,30 @@
+##Pablo
+
+Pregunta 2
+¿Cuáles son los pros y los contras principales de adoptar una estrategia de branching con ramas de larga duración (como develop o feature largas) frente a ramas de corta vida y integración frecuente en main?
+
+Ramas de larga duración
+Pros
+- Aislamiento fuerte: experimentas sin romper lo estable.
+- Ventana de estabilización: releases se pulen en ramas separadas (menos riesgo en main).
+- Flujo cómodo para QA: pruebas por “oleadas” de cambios.
+- Control de versiones: fácil etiquetar y mantener varias líneas (release y hotfix).
+
+Contras
+- “Drift” y conflictos: al separarse por mucho tiempo, los merges duelen.
+- Feedback lento: errores se detectan tarde; ciclo de entrega se alarga.
+- Trabajo duplicado
+- Integración pesada: CI tarda más, historial más complejo.
+
+Ramas de corta vida + integración frecuente en main:
+Pros
+- Feedback rápido y continuo: fallas se detectan el mismo día.
+- Menos conflictos: ramas pequeñas = merges sencillos.
+- Entrega continua: puedes liberar valor con más frecuencia.
+- Historial simple: menos ramas viejas; el repo se mantiene “limpio”.
+
+Contras
+- Mayor disciplina: tests automatizados y PRs pequeños.
+- Feature flags casi obligatorios: integrar código incompleto sin romper producción.
+- Riesgo de “romper” main si la calidad baja.
+- No es ideal para ciclos de liberación muy formales o regulados.

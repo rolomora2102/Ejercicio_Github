@@ -1,0 +1,18 @@
+Comandos usados por Pablo – Pregunta 2
+
+git clone https://github.com/rolomora2102/Ejercicio_Github.git
+cd Ejercicio_Github
+git fetch --all
+git checkout feature-pablo
+git checkout development
+git pull origin development
+git checkout feature-pablo
+git rebase origin/development
+mkdir -p docs
+# (Creación de archivos)
+#   docs/pablo-pregunta-2.txt  -> contiene la respuesta
+#   docs/pablo-comandos.txt    -> contiene este listado
+git add docs/pablo-pregunta-2.txt docs/pablo-comandos.txt
+git commit -m "Pablo: agrega respuesta pregunta 2 y documentación de comandos"
+git push -u origin feature-pablo
+# Luego: Pull Request desde feature-pablo hacia development en GitHub
