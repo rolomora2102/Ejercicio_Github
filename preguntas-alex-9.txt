@@ -1,0 +1,99 @@
+¿Cómo se debería estructurar el flujo de trabajo de branching para gestionar effectively hotfixes o
+parches críticos en producción de manera ágil y segura?
+
+Flujo de trabajo (GitFlow)
+
+Detección y triage
+
+Abrir issue/ticket con impacto, versión afectada y SLO.
+
+Nombrar “incident owner”.
+
+Cortar rama de hotfix desde producción
+
+Punto de verdad: main (o el tag desplegado).
+
+Rama: hotfix/x.y.z-<slug-incidente> (bump de patch).
+
+git checkout main && git pull --ff-only
+git checkout -b hotfix/1.2.4-<slug>
+
+
+Arreglo mínimo y pruebas
+
+Cambios pequeños y focalizados (sin refactors).
+
+Añadir test que reproduzca el bug y test de verificación.
+
+PR acelerado a main + guardas de calidad
+
+CI obligatorio: build, unit/integration tests, linters/SAST.
+
+Revisión rápida (ideal: 2 reviewers o code owners).
+
+Plantilla de PR: causa raíz, alcance, plan de rollback, pasos de validación.
+
+git add .
+git commit -m "fix: corrige <bug> (#ISSUE)"
+git push -u origin hotfix/1.2.4-<slug>
+# Abrir PR: base=main ← compare=hotfix/...
+
+
+Merge, tag y despliegue inmediato
+
+Merge (evita squash si quieres rastrear la historia del fix).
+
+Etiquetar release y desplegar.
+
+# tras merge
+git fetch --tags
+git tag -a v1.2.4 -m "Hotfix: <resumen>"
+git push origin v1.2.4
+
+
+Back-merge para no perder el fix
+
+Llevar el cambio a líneas activas:
+
+develop: PR base=develop ← compare=main o cherry-pick del commit.
+
+release/* abierto (si lo hay): PR base=release/x.y.z ← compare=main.
+
+git checkout develop && git pull
+git merge --no-ff origin/main  # o: git cherry-pick <SHA-hotfix>
+git push origin develop
+
+
+Verificación post-despliegue
+
+Smoke tests, monitoreo de métricas/logs/alertas.
+
+Rollback automatizado al tag previo si falla.
+
+Cierre y aprendizaje
+
+Cerrar issue con evidencia (PRs, tags, pipeline).
+
+Mini postmortem: causa raíz, prevención, pruebas añadidas, docs.
+
+Políticas y convenciones clave
+
+Ramas protegidas: main y develop con reviews y status checks obligatorios; sin push directo.
+
+Naming: hotfix/x.y.z-<issue>; Conventional Commits (fix:) con referencia al issue.
+
+Pipelines por PR: tests, SAST, cobertura mínima, gates de aprobación.
+
+Feature flags cuando aplique (habilitar/deshabilitar sin redeploy).
+
+Rollback script en CD (re-desplegar tag anterior).
+
+Soporte multi-versión: cherry-pick del fix a ramas LTS si existen.
+
+Variante si usas Trunk-Based / GitHub Flow
+
+Rama hotfix/... desde main → PR a main con mismos checks → deploy continuo → tag.
+
+Si hay ramas de soporte, cherry-pick del commit del hotfix a cada una.
+
+Con esto garantizas rapidez, seguridad, trazabilidad (tags) y no regresiones (back-merge/cherry-pick).
